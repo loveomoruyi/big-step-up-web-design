@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+        <meta name="robots" content="noindex, nofollow">
+        <meta name="googlebot" content="noindex, nofollow, nosnippet, noarchive">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AB Autos - Service</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0A0A0A;
+            color: #FAFAFA;
+            min-height: 100vh;
+        }
+        nav {
+            background: #0A0A0A;
+            border-bottom: 1px solid rgba(212,168,67,0.3);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #D4A843;
+            text-decoration: none;
+        }
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        .nav-links a {
+            color: #888888;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .nav-links a:hover {
+            color: #D4A843;
+        }
+        .hero {
+            background: linear-gradient(135deg, #0A0A0A 0%, #111111 50%, #0A0A0A 100%);
+            background-size: cover;
+            position: relative;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, rgba(212,168,67,0.1) 0%, transparent 70%);
+        }
+        .hero h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #D4A843, #C8C647);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+        }
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+        .form-section {
+            background: #111111;
+            border: 1px solid #1A1500;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+        .form-section h2 {
+            font-family: 'Montserrat', sans-serif;
+            color: #D4A843;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #FAFAFA;
+            font-weight: 500;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: #111111;
+            border: 1px solid rgba(212,168,67,0.3);
+            border-radius: 8px;
+            color: #FAFAFA;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #D4A843;
+        }
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .submit-btn {
+            background: #D4A843;
+            color: #FAFAFA;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+        .submit-btn:hover {
+            opacity: 0.9;
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .service-card {
+            background: #111111;
+            border: 1px solid #1A1500;
+            border-radius: 12px;
+            padding: 2rem;
+            transition: border-color 0.3s ease, transform 0.3s ease;
+        }
+        .service-card:hover {
+            border-color: #D4A843;
+            transform: translateY(-5px);
+        }
+        .service-card h3 {
+            font-family: 'Montserrat', sans-serif;
+            color: #D4A843;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+        .service-card p {
+            color: #CCCCCC;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="dealership.html" class="logo">AB Autos</a>
+            <ul class="nav-links">
+                <li><a href="dealership.html">Home</a></li>
+                <li><a href="aboutus.html">About Us</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+                <li><a href="service.html">Service</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>Service</h1>
+    </section>
+
+    <div class="content">
+        <div class="form-section">
+            <h2>Schedule a Service</h2>
+            <form>
+                <div class="form-group">
+                    <label for="service-date">Service Date</label>
+                    <input type="date" id="service-date" name="service-date">
+                </div>
+                <div class="form-group">
+                    <label for="service-description">Describe what needs to be worked on</label>
+                    <textarea id="service-description" name="service-description" placeholder="Please describe the issue or service needed for your car..."></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Submit</button>
+            </form>
+        </div>
+
+        <h2 style="font-family: 'Montserrat', sans-serif; color: #D4A843; margin-bottom: 1.5rem; font-size: 1.5rem;">Our Services</h2>
+        <div class="services-grid">
+            <div class="service-card">
+                <h3>Detailing</h3>
+                <p>Professional interior and exterior detailing services to keep your vehicle looking showroom fresh. Our team uses premium products and techniques to restore and protect your car's finish.</p>
+            </div>
+            <div class="service-card">
+                <h3>Inspection</h3>
+                <p>Comprehensive vehicle inspections covering all major systems. Our certified technicians will thoroughly examine your vehicle and provide a detailed report of its condition.</p>
+            </div>
+        </div>
+    </div>
+
+<script>
+(function(){
+var a=document.createElement("audio");
+a.src="audio/beat.mp4";
+a.loop=true;
+a.volume=0.3;
+document.documentElement.appendChild(a);
+var b=document.createElement("button");
+b.id="music-toggle";
+b.innerHTML='<span style=\"position:relative;display:inline-block;\">\u266B<span style=\"position:absolute;top:-2px;left:0;font-size:22px;transform:rotate(-45deg);pointer-events:none;\">\u2014</span></span>';
+b.title="Toggle Music";
+b.setAttribute("style","position:fixed !important;bottom:30px !important;right:30px !important;z-index:2147483647 !important;width:55px !important;height:55px !important;border-radius:50% !important;border:2px solid #d4af37 !important;background:rgba(0,0,0,0.9) !important;color:#d4af37 !important;font-size:22px !important;font-weight:bold !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;box-shadow:0 4px 15px rgba(212,175,55,0.4) !important;font-family:sans-serif !important;transform:none !important;");
+document.documentElement.appendChild(b);
+var playing=false;
+var userClicked=false;
+function setOn(){playing=true;b.innerHTML="\u266B";b.style.setProperty("border-color","#00ff00","important");}
+function setOff(){playing=false;b.innerHTML='<span style=\"position:relative;display:inline-block;\">\u266B<span style=\"position:absolute;top:-2px;left:0;font-size:22px;transform:rotate(-45deg);pointer-events:none;\">\u2014</span></span>';b.style.setProperty("border-color","#d4af37","important");}
+b.addEventListener("click",function(e){
+e.stopPropagation();
+userClicked=true;
+if(playing){a.pause();setOff();}
+else{a.play().then(setOn).catch(function(){});}
+});
+// Aggressive autoplay - start muted then unmute
+  a.muted = true;
+  a.play().then(function(){
+    // Audio started muted, now try to unmute
+    a.muted = false;
+    a.volume = 0.3;
+    setOn();
+  }).catch(function(){
+    // Even muted play failed - try on interaction
+    var events=["click","touchstart","scroll","keydown","mousemove"];
+    function startOnInteraction(){
+      if(!playing && !userClicked){
+        a.muted = false;
+        a.volume = 0.3;
+        a.play().then(function(){
+          setOn();
+          events.forEach(function(evt){ document.removeEventListener(evt, startOnInteraction, true); });
+        }).catch(function(){});
+      }
+    }
+    events.forEach(function(evt){ document.addEventListener(evt, startOnInteraction, true); });
+  });
+  // Fallback: also try unmuted play after short delay
+  setTimeout(function(){
+    if(!playing && !userClicked){
+      a.muted = false;
+      a.volume = 0.3;
+      a.play().then(setOn).catch(function(){
+        var events=["click","touchstart","scroll","keydown","mousemove"];
+        function startOnInteraction2(){
+          if(!playing && !userClicked){
+            a.muted = false;
+            a.volume = 0.3;
+            a.play().then(function(){
+              setOn();
+              events.forEach(function(evt){ document.removeEventListener(evt, startOnInteraction2, true); });
+            }).catch(function(){});
+          }
+        }
+        events.forEach(function(evt){ document.addEventListener(evt, startOnInteraction2, true); });
+      });
+    }
+  }, 1000);
+})();
+</script>
+<footer style="background-color: #111; color: #fff; text-align: center; padding: 20px; font-family: Arial, sans-serif; border-top: 2px solid #d4af37; margin-top: 40px;"><p style="margin: 5px 0; font-size: 14px;">Built by Love Omoruyi with Vision</p><p style="margin: 5px 0; font-size: 14px;">&#9742; 832-340-5799</p></footer>
+<script src="music-player.js"></script>
+</body>
+</html>

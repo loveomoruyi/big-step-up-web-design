@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+        <meta name="robots" content="noindex, nofollow" />
+        <meta name="googlebot" content="noindex, nofollow, nosnippet, noarchive" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Montserrat:wght@100..900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AB Autoz - Vehicle Inventory</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background-color: #0A0A0A;
+            color: #ffffff;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background-color: #1a1a2e;
+            border-bottom: 1px solid rgba(212, 168, 67, 0.3);
+        }
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 1px; color: #D4A843; font-size: 1.8rem; }
+        .header nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 25px;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+        .header nav a:hover { color: #D4A843; }
+        .hero-banner {
+            padding: 60px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+        .hero-banner h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.2rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .hero-banner p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 25px 50px;
+            background-color: #111111;
+            border-bottom: 1px solid #222;
+            align-items: center;
+            justify-content: center;
+        }
+        .filter-bar select, .filter-bar button {
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            border: 1px solid #333;
+            background: #1a1a2e;
+            color: white;
+            cursor: pointer;
+        }
+        .filter-bar button {
+            background: #D4A843;
+            color: #000;
+            font-weight: 600;
+            border: none;
+        }
+        .filter-bar button:hover { background: #B8922E; }
+        .inventory-section {
+            padding: 50px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .inventory-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            color: #D4A843;
+            border-left: 4px solid #D4A843;
+            padding-left: 15px;
+        }
+        .car-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        .car-card {
+            background: #1a1a2e;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #2a2a4e;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .car-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(212, 168, 67, 0.2);
+        }
+        .car-card .image-container {
+            background: #ffffff;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 220px;
+        }
+        .car-card .image-container img {
+            max-width: 100%; mix-blend-mode: multiply;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .car-card .details {
+            padding: 20px;
+        }
+        .car-card .details h3 {
+            font-size: 1.2rem;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+        .car-card .details .specs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0;
+        }
+        .car-card .details .specs span {
+            background: rgba(212, 168, 67, 0.15);
+            color: #D4A843;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        .car-card .details .price {
+            font-size: 1.4rem;
+            color: #D4A843;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        .car-card .details .mileage {
+            color: #94A3B8;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .badge-certified { background: #065f46; color: #6ee7b7; }
+        .badge-available { background: #1e3a5f; color: #7dd3fc; }
+        .footer {
+            text-align: center;
+            padding: 30px;
+            background: #1a1a2e;
+            color: #94A3B8;
+            border-top: 1px solid rgba(212, 168, 67, 0.3);
+        }
+        .footer a { color: #D4A843; text-decoration: none; }
+        @media (max-width: 768px) {
+            .header { padding: 15px 20px; flex-direction: column; gap: 10px; }
+            .inventory-section { padding: 20px; }
+            .car-grid { grid-template-columns: 1fr; }
+            .filter-bar { padding: 15px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>AB Autoz</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="inventory.html">Inventory</a>
+            <a href="service.html">Service</a>
+            <a href="contact.html">Contact Us</a>
+        </nav>
+    </div>
+    <div class="hero-banner">
+        <h1>Our Vehicle Inventory</h1>
+        <p>Browse our curated selection of premium vehicles</p>
+    </div>
+    <div class="filter-bar">
+        <select><option>All Makes</option><option>Toyota</option><option>BMW</option><option>Mercedes</option><option>Porsche</option><option>Range Rover</option><option>Audi</option><option>Ferrari</option><option>Bentley</option><option>Honda</option></select>
+        <select><option>All Models</option></select>
+        <select><option>Year</option><option>2024</option><option>2023</option><option>2022</option><option>2021</option></select>
+        <select><option>Price Range</option><option>Under $30k</option><option>$30k - $60k</option><option>$60k - $100k</option><option>$100k+</option></select>
+        <button>Search Inventory</button>
+    </div>
+    <div class="inventory-section">
+        <h2>Sedans &amp; Compacts</h2>
+        <div class="car-grid">
+            <div class="car-card">
+                <div class="image-container">
+                    <img src="image/honda-civic-2022-sport-blue.png" alt="2022 Honda Civic Sport">
+                </div>
+                <div class="details">
+                    <span class="badge badge-certified">Certified Pre-Owned</span>
+                    <h3>2022 Honda Civic Sport</h3>
+                    <div class="specs">
+                        <span>2.0L 4-Cyl</span>
+                        <span>CVT</span>
+                        <span>FWD</span>
+                        <span>Blue</span>
+                    </div>
+                    <p class="mileage">32,450 miles</p>
+                    <p class="price">$23,500</p>
+                </div>
+            </div>
+            <div class="car-card">
+                <div class="image-container">
+                    <img src="image/bmw.png" alt="2023 BMW 3 Series">
+                </div>
+                <div class="details">
+                    <span class="badge badge-available">Available</span>
+                    <h3>2023 BMW 330i xDrive</h3>
+                    <div class="specs">
+                        <span>2.0L Turbo</span>
+                        <span>8-Speed Auto</span>
+                        <span>AWD</span>
+                        <span>Alpine White</span>
+                    </div>
+                    <p class="mileage">12,800 miles</p>
+                    <p class="price">$42,900</p>
+                </div>
+            </div>
+            <div class="car-card">
+                <div class="image-container">
+                    <img src="image/mercedes.png" alt="2022 Mercedes C-Class">
+                </div>
+                <div class="details">
+                    <span class="badge badge-available">Available</span>
+                    <h3>2022 Mercedes-Benz C300</h3>
+                    <div class="specs">
+                        <span>2.0L Turbo</span>
+                        <span>9-Speed Auto</span>
+                        <span>RWD</span>
+                        <span>Obsidian Black</span>
+                    </div>
+                    <p class="mileage">18,200 miles</p>
+                    <p class="price">$45,750</p>
+                </div>
+            </div>
+        </div>
+        <h2>SUVs &amp; Crossovers</h2>
+        <div class="car-grid">
+            <div class="car-card">
+                <div class="image-container">
+                    <img src="image/range-rover.png" alt="2023 Range Rover Sport">
+                </div>
+                <div class="details">
+                    <span class="badge badge-certified">Certified Pre-Owned</span>
+                    <h3>2023 Range Rover Sport</h3>
+                    <div class="specs">
+                        <span>3.0L V6 Turbo</span>
+                        <span>8-Speed Auto</span>
+                        <span>AWD</span>
+                        <span>Santorini Black</span>
+                    </div>
+                    <p class="mileage">9,800 miles</p>
+                    <p class="price">$89,900</p>
+                </div>
+            </div>
+            <div class="car-card">
+                <div class="image-container">
+                    <img src="image/bentley-bentayga-2022-black.png" alt="2022 Bentley Bentayga">
+                </div>
+                <div class="details">
+                    <span class="badge badge-certified">Certified Pre-Owned</span>
+                    <h3>2022 Bentley Bentayga V8</h3>
+                    <div class="specs">
+                        <span>4.0L V8 Twin-Turbo</span>
+                        <span>8-Speed Auto</span>
+                        <span>AWD</span>
+                        <span>Beluga Black</span>
+                    </div>
+                    <p class="mileage">8,500 miles</p>
+                    <p class="price">$198,900</p>
+                </div>
+            </div>
+            <div class="car-card">
+                <div class="image-container">
+                    <img src="image/porsche.jpg" alt="2023 Porsche Cayenne">
+                </div>
+                <div class="details">
+                    <span class="badge badge-available">Available</span>
+                    <h3>2023 Porsche Cayenne S</h3>
+                    <div class="specs">
+                        <span>2.9L V6 Twin-Turbo</span>
+                        <span>8-Speed Tiptronic</span>
+                        <span>AWD</span>
+                        <span>Carrara White</span>
+                    </div>
+                    <p class="mileage">5,200 miles</p>
+                    <p class="price">$95,500</p>
+                </div>
+            </div>
+        </div>
+        <h2>Sports &amp; Luxury</h2>
+        <div class="car-grid">
+            <div class="car-card">
+                <div class="image-container">
+                    <img src="image/ferrari-f8-tributo-red.png" alt="2021 Ferrari F8 Tributo">
+                </div>
+                <div class="details">
+                    <span class="badge badge-certified">Certified Pre-Owned</span>
+                    <h3>2021 Ferrari F8 Tributo</h3>
+                    <div class="specs">
+                        <span>3.9L V8 Twin-Turbo</span>
+                        <span>7-Speed DCT</span>
+                        <span>RWD</span>
+                        <span>Rosso Corsa</span>
+                    </div>
+                    <p class="mileage">8,426 miles</p>
+                    <p class="price">$357,991</p>
+                </div>
+            </div>
+            <div class="car-card">
+                <div class="image-container">
+                    <img src="image/audi.jpg" alt="2023 Audi RS5">
+                </div>
+                <div class="details">
+                    <span class="badge badge-available">Available</span>
+                    <h3>2023 Audi RS5 Sportback</h3>
+                    <div class="specs">
+                        <span>2.9L V6 Twin-Turbo</span>
+                        <span>8-Speed Tiptronic</span>
+                        <span>AWD</span>
+                        <span>Nardo Grey</span>
+                    </div>
+                    <p class="mileage">3,100 miles</p>
+                    <p class="price">$78,500</p>
+                </div>
+            </div>
+            <div class="car-card">
+                <div class="image-container">
+                    <img src="image/bentley.jpg" alt="2023 Bentley Continental GT">
+                </div>
+                <div class="details">
+                    <span class="badge badge-available">Available</span>
+                    <h3>2023 Bentley Continental GT</h3>
+                    <div class="specs">
+                        <span>6.0L W12 Twin-Turbo</span>
+                        <span>8-Speed DCT</span>
+                        <span>AWD</span>
+                        <span>Glacier White</span>
+                    </div>
+                    <p class="mileage">2,100 miles</p>
+                    <p class="price">$245,000</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <p>&copy; 2026 AB Autoz. All Rights Reserved. | <a href="contact.html">Contact Us</a> for financing options</p>
+    </div>
+
+
+
+
+<!-- Background Music Player -->
+<script>
+(function(){
+  var a=document.createElement("audio");
+  a.id="bg-music";a.loop=true;a.volume=0.3;
+  a.src="audio/beat.mp4";
+  document.documentElement.appendChild(a);
+  var b=document.createElement("button");
+  b.id="music-toggle";
+  b.innerHTML="<span style=\"position:relative;display:inline-block;\">\u266B<span style=\"position:absolute;top:-2px;left:0;font-size:22px;transform:rotate(-45deg);pointer-events:none;\">\u2014</span></span>";
+  b.title="Toggle Music";
+  b.setAttribute("style","position:fixed !important;bottom:30px !important;right:30px !important;z-index:2147483647 !important;width:55px !important;height:55px !important;border-radius:50% !important;border:2px solid #d4af37 !important;background:rgba(0,0,0,0.9) !important;color:#d4af37 !important;font-size:22px !important;font-weight:bold !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;box-shadow:0 4px 15px rgba(212,175,55,0.4) !important;font-family:sans-serif !important;transform:none !important;");
+  document.documentElement.appendChild(b);
+  var playing=false;
+  var userClicked=false;
+  function setOn(){playing=true;b.innerHTML="\u266B";b.style.setProperty("border-color","#00ff00","important");}
+  function setOff(){playing=false;b.innerHTML="<span style=\"position:relative;display:inline-block;\">\u266B<span style=\"position:absolute;top:-2px;left:0;font-size:22px;transform:rotate(-45deg);pointer-events:none;\">\u2014</span></span>";b.style.setProperty("border-color","#d4af37","important");}
+  b.addEventListener("click",function(e){
+    e.stopPropagation();
+    userClicked=true;
+    if(playing){a.pause();setOff();}
+    else{a.play().then(setOn).catch(function(){});}
+  });
+// Aggressive autoplay - start muted then unmute
+  a.muted = true;
+  a.play().then(function(){
+    // Audio started muted, now try to unmute
+    a.muted = false;
+    a.volume = 0.3;
+    setOn();
+  }).catch(function(){
+    // Even muted play failed - try on interaction
+    var events=["click","touchstart","scroll","keydown","mousemove"];
+    function startOnInteraction(){
+      if(!playing && !userClicked){
+        a.muted = false;
+        a.volume = 0.3;
+        a.play().then(function(){
+          setOn();
+          events.forEach(function(evt){ document.removeEventListener(evt, startOnInteraction, true); });
+        }).catch(function(){});
+      }
+    }
+    events.forEach(function(evt){ document.addEventListener(evt, startOnInteraction, true); });
+  });
+  // Fallback: also try unmuted play after short delay (some browsers allow after page settles)
+  setTimeout(function(){
+    if(!playing && !userClicked){
+      a.muted = false;
+      a.volume = 0.3;
+      a.play().then(setOn).catch(function(){
+        // If still blocked, ensure interaction listeners are set
+        var events=["click","touchstart","scroll","keydown","mousemove"];
+        function startOnInteraction2(){
+          if(!playing && !userClicked){
+            a.muted = false;
+            a.volume = 0.3;
+            a.play().then(function(){
+              setOn();
+              events.forEach(function(evt){ document.removeEventListener(evt, startOnInteraction2, true); });
+            }).catch(function(){});
+          }
+        }
+        events.forEach(function(evt){ document.addEventListener(evt, startOnInteraction2, true); });
+      });
+    }
+  }, 1000);
+})();
+</script>
+
+<footer style="background-color: #111; color: #fff; text-align: center; padding: 20px; font-family: Arial, sans-serif; border-top: 2px solid #d4af37; margin-top: 40px;"><p style="margin: 5px 0; font-size: 14px;">Built by Love Omoruyi with Vision</p><p style="margin: 5px 0; font-size: 14px;">&#9742; 832-340-5799</p></footer>
+<script src="music-player.js"></script>
+</body>
+</html>
