@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ever After Elegance | Luxury Wedding Events &amp; Decoration</title>
+    <meta name="description" content="Curating extraordinary weddings with unparalleled elegance and bespoke artistry. Luxury wedding planning, ceremony design, and floral artistry.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Georgia', serif; color: #2d2d2d; overflow-x: hidden; }
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 4rem; transition: all 0.4s ease; }
+        .nav.scrolled { background: rgba(255,255,255,0.97); box-shadow: 0 2px 20px rgba(0,0,0,0.08); padding: 1rem 4rem; }
+        .nav-logo { font-size: 1.5rem; font-weight: 700; color: #fff; letter-spacing: 1px; transition: color 0.4s; }
+        .nav.scrolled .nav-logo { color: #2d2d2d; }
+        .nav-links { display: flex; list-style: none; gap: 2.5rem; }
+        .nav-links a { text-decoration: none; color: rgba(255,255,255,0.9); font-size: 0.9rem; letter-spacing: 0.5px; transition: color 0.3s; }
+        .nav.scrolled .nav-links a { color: #555; }
+        .nav-links a:hover { color: #c9a96e; }
+        .hero { position: relative; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .hero-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        .hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.6)); }
+        .hero-content { position: relative; z-index: 2; text-align: center; max-width: 800px; padding: 0 2rem; }
+        .hero-sub { color: #c9a96e; font-size: 0.9rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1.5rem; opacity: 0; animation: fadeUp 0.8s ease forwards 0.2s; }
+        .hero-title { color: #fff; font-size: 3.5rem; line-height: 1.2; margin-bottom: 1.5rem; font-weight: 400; opacity: 0; animation: fadeUp 0.8s ease forwards 0.4s; }
+        .hero-tag { color: rgba(255,255,255,0.85); font-size: 1.1rem; margin-bottom: 2.5rem; font-style: italic; opacity: 0; animation: fadeUp 0.8s ease forwards 0.6s; }
+        .hero-btn { display: inline-block; padding: 1rem 2.5rem; background: #c9a96e; color: #fff; text-decoration: none; font-size: 0.9rem; letter-spacing: 1px; transition: all 0.3s; opacity: 0; animation: fadeUp 0.8s ease forwards 0.8s; }
+        .hero-btn:hover { background: #b8944f; transform: translateY(-2px); }
+        .section-tag { color: #c9a96e; font-size: 0.85rem; letter-spacing: 3px; text-transform: uppercase; text-align: center; margin-bottom: 0.8rem; }
+        .section-title { font-size: 2.5rem; text-align: center; font-weight: 400; margin-bottom: 1rem; color: #2d2d2d; }
+        .divider { width: 60px; height: 2px; background: #c9a96e; margin: 1rem auto; }
+        .section-desc { text-align: center; color: #666; font-size: 1rem; max-width: 600px; margin: 0 auto 3rem; line-height: 1.7; }
+        .services { padding: 8rem 4rem; background: #fafafa; }
+        .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; max-width: 1200px; margin: 0 auto; }
+        .svc-card { background: #fff; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); transition: transform 0.3s, box-shadow 0.3s; }
+        .svc-card:hover { transform: translateY(-8px); box-shadow: 0 12px 40px rgba(0,0,0,0.12); }
+        .svc-img { width: 100%; height: 250px; object-fit: cover; transition: transform 0.5s; }
+        .svc-card:hover .svc-img { transform: scale(1.05); }
+        .svc-body { padding: 2rem; }
+        .svc-title { font-size: 1.3rem; margin-bottom: 0.8rem; font-weight: 600; color: #2d2d2d; }
+        .svc-text { color: #666; line-height: 1.7; font-size: 0.95rem; }
+        .about { display: flex; align-items: center; gap: 5rem; padding: 8rem 4rem; max-width: 1200px; margin: 0 auto; }
+        .about-imgw { position: relative; flex: 1; }
+        .about-img { width: 100%; border-radius: 4px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+        .about-accent { position: absolute; top: -20px; left: -20px; right: 20px; bottom: 20px; border: 2px solid #c9a96e; border-radius: 4px; z-index: -1; }
+        .about-content { flex: 1; }
+        .about-tag { color: #c9a96e; font-size: 0.85rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 0.8rem; }
+        .about-title { font-size: 2.2rem; font-weight: 400; margin-bottom: 1.5rem; color: #2d2d2d; }
+        .about-text { color: #666; line-height: 1.8; margin-bottom: 2rem; font-size: 1rem; }
+        .gallery { padding: 8rem 4rem; background: #fafafa; }
+        .gal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; max-width: 1000px; margin: 0 auto; }
+        .gal-item { overflow: hidden; border-radius: 4px; aspect-ratio: 1; }
+        .gal-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .gal-item:hover img { transform: scale(1.1); }
+        .gal-item:first-child { grid-row: span 2; grid-column: span 1; aspect-ratio: auto; }
+        .gal-item:nth-child(5) { grid-column: span 1; grid-row: span 2; aspect-ratio: auto; }
+        .testimonials { padding: 8rem 4rem; text-align: center; background: #fff; }
+        .tst-text { font-size: 1.3rem; line-height: 1.8; color: #444; max-width: 800px; margin: 2rem auto; font-style: italic; }
+        .tst-author { color: #c9a96e; font-size: 0.95rem; letter-spacing: 1px; }
+        .cta { padding: 8rem 4rem; text-align: center; background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%); color: #fff; }
+        .cta .section-title, .cta-title { color: #fff; font-size: 2.5rem; font-weight: 400; text-align: center; margin-bottom: 1rem; }
+        .cta .divider { background: #c9a96e; }
+        .cta-text { color: rgba(255,255,255,0.8); font-size: 1.1rem; margin: 1.5rem auto 2.5rem; max-width: 500px; }
+        .cta-btn { display: inline-block; padding: 1rem 2.5rem; border: 2px solid #c9a96e; color: #c9a96e; text-decoration: none; font-size: 0.9rem; letter-spacing: 1px; transition: all 0.3s; }
+        .cta-btn:hover { background: #c9a96e; color: #fff; }
+        .footer { padding: 3rem 4rem; text-align: center; background: #111; color: #999; }
+        .footer-logo { font-size: 1.3rem; color: #fff; margin-bottom: 1.5rem; letter-spacing: 1px; }
+        .footer-links { display: flex; justify-content: center; list-style: none; gap: 2rem; margin-bottom: 1.5rem; }
+        .footer-links a { color: #999; text-decoration: none; font-size: 0.85rem; transition: color 0.3s; }
+        .footer-links a:hover { color: #c9a96e; }
+        .footer-copy { font-size: 0.8rem; color: #666; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-up { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+        @media (max-width: 968px) { .services-grid { grid-template-columns: 1fr; max-width: 500px; } .about { flex-direction: column; gap: 3rem; padding: 5rem 2rem; } .gal-grid { grid-template-columns: repeat(2, 1fr); } .gal-item:first-child, .gal-item:nth-child(5) { grid-row: span 1; aspect-ratio: 1; } .hero-title { font-size: 2.5rem; } .nav { padding: 1rem 2rem; } .nav-links { gap: 1.5rem; } }
+        @media (max-width: 600px) { .nav-links { display: none; } .hero-title { font-size: 2rem; } .section-title, .cta-title, .about-title { font-size: 1.8rem; } .gal-grid { grid-template-columns: repeat(2, 1fr); } .services, .gallery, .testimonials, .cta { padding: 5rem 2rem; } }
+    </style>
+</head>
+<body>
+    <nav class="nav" id="navbar">
+        <div class="nav-logo">Ever After Elegance</div>
+        <ul class="nav-links">
+            <li><a href="#services">Services</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#testimonials">Testimonials</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+    <section class="hero">
+        <video autoplay muted loop playsinline class="hero-video" poster="https://images.unsplash.com/photo-1519741497674-611481863552?w=1920&h=1080&fit=crop">
+            <source src="https://cdn.coverr.co/videos/coverr-white-petals-falling-down-2402/1080p.mp4" type="video/mp4">
+        </video>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <p class="hero-sub">Wedding Events &amp; Decoration</p>
+            <h1 class="hero-title">Where Dreams Become Timeless Celebrations</h1>
+            <p class="hero-tag">Curating extraordinary weddings with unparalleled elegance and bespoke artistry</p>
+            <a href="#contact" class="hero-btn">Begin Your Journey</a>
+        </div>
+    </section>
+    <section class="services" id="services">
+        <p class="section-tag fade-up">Our Services</p>
+        <h2 class="section-title fade-up">Crafting Unforgettable Moments</h2>
+        <div class="divider"></div>
+        <p class="section-desc fade-up">Every detail is thoughtfully curated to create a celebration that is uniquely yours</p>
+        <div class="services-grid">
+            <div class="svc-card fade-up">
+                <div style="overflow:hidden"><img class="svc-img" src="https://plus.unsplash.com/premium_photo-1674759803745-8c929204b789?w=600&h=400&fit=crop" alt="Luxury Ceremonies"></div>
+                <div class="svc-body"><h3 class="svc-title">Luxury Ceremonies</h3><p class="svc-text">Bespoke ceremony design with breathtaking floral installations, elegant arches, and curated details that reflect your unique love story.</p></div>
+            </div>
+            <div class="svc-card fade-up">
+                <div style="overflow:hidden"><img class="svc-img" src="https://plus.unsplash.com/premium_photo-1674582080259-291ddca52ce9?w=600&h=400&fit=crop" alt="Reception Design"></div>
+                <div class="svc-body"><h3 class="svc-title">Reception Design</h3><p class="svc-text">Transform any venue into a magnificent celebration space with custom tablescapes, lighting design, and exquisite decor.</p></div>
+            </div>
+            <div class="svc-card fade-up">
+                <div style="overflow:hidden"><img class="svc-img" src="https://plus.unsplash.com/premium_photo-1661429475489-3f6932220757?w=600&h=400&fit=crop" alt="Floral Artistry"></div>
+                <div class="svc-body"><h3 class="svc-title">Floral Artistry</h3><p class="svc-text">From cascading centerpieces to romantic bouquets, our master florists create living works of art for your celebration.</p></div>
+            </div>
+        </div>
+    </section>
+    <section class="about" id="about">
+        <div class="about-imgw fade-up">
+            <img class="about-img" src="https://images.unsplash.com/photo-1606800052052-a08af7148866?w=600&h=500&fit=crop" alt="About Ever After Elegance">
+            <div class="about-accent"></div>
+        </div>
+        <div class="about-content fade-up">
+            <p class="about-tag">Our Story</p>
+            <h2 class="about-title">A Passion for Perfection</h2>
+            <p class="about-text">With over a decade of experience in luxury wedding design, Ever After Elegance transforms your vision into an extraordinary celebration. Our team of skilled designers, florists, and planners work together to create events that are as unique as your love story.</p>
+            <a href="#contact" class="hero-btn">Discover More</a>
+        </div>
+    </section>
+    <section class="gallery" id="gallery">
+        <p class="section-tag fade-up">Portfolio</p>
+        <h2 class="section-title fade-up">Our Signature Events</h2>
+        <div class="divider"></div>
+        <p class="section-desc fade-up">A glimpse into the magical celebrations we have had the honor of creating</p>
+        <div class="gal-grid">
+            <div class="gal-item fade-up"><img src="https://plus.unsplash.com/premium_photo-1723575643935-6462b8f37817?w=800&h=800&fit=crop" alt="Gallery 1"></div>
+            <div class="gal-item fade-up"><img src="https://plus.unsplash.com/premium_photo-1682092590272-084f07c43606?w=400&h=400&fit=crop" alt="Gallery 2"></div>
+            <div class="gal-item fade-up"><img src="https://plus.unsplash.com/premium_photo-1664910943599-a3fc3b885a91?w=400&h=400&fit=crop" alt="Gallery 3"></div>
+            <div class="gal-item fade-up"><img src="https://plus.unsplash.com/premium_photo-1698391728631-54abb9dee1b7?w=400&h=400&fit=crop" alt="Gallery 4"></div>
+            <div class="gal-item fade-up"><img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&h=800&fit=crop" alt="Gallery 5"></div>
+            <div class="gal-item fade-up"><img src="https://plus.unsplash.com/premium_photo-1661430689016-cad7e7ebc3e7?w=400&h=400&fit=crop" alt="Gallery 6"></div>
+            <div class="gal-item fade-up"><img src="https://plus.unsplash.com/premium_photo-1726797756042-cd73088a0ae9?w=400&h=400&fit=crop" alt="Gallery 7"></div>
+            <div class="gal-item fade-up"><img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=400&h=400&fit=crop" alt="Gallery 8"></div>
+            <div class="gal-item fade-up"><img src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=400&h=400&fit=crop" alt="Gallery 9"></div>
+        </div>
+    </section>
+    <section class="testimonials" id="testimonials">
+        <p class="section-tag fade-up">Testimonials</p>
+        <h2 class="section-title fade-up">Words from Our Couples</h2>
+        <div class="divider"></div>
+        <p class="tst-text fade-up">&ldquo;Ever After Elegance made our wedding day absolutely magical. Every detail was perfect, from the stunning floral arrangements to the breathtaking reception design. They truly brought our dream wedding to life.&rdquo;</p>
+        <p class="tst-author fade-up">&mdash; Alexandra &amp; James, 2025</p>
+    </section>
+    <section class="cta" id="contact">
+        <h2 class="cta-title fade-up">Let Us Create Your Perfect Day</h2>
+        <div class="divider"></div>
+        <p class="cta-text fade-up">Begin planning your dream wedding with our team of luxury event designers</p>
+        <a href="mailto:hello@everafterelegance.com" class="cta-btn fade-up">Schedule a Consultation</a>
+    </section>
+    <footer class="footer">
+        <div class="footer-logo">Ever After Elegance</div>
+        <ul class="footer-links">
+            <li><a href="#services">Services</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <p class="footer-copy">&copy; 2026 Ever After Elegance. All rights reserved.</p>
+    </footer>
+    <script>
+        const nav = document.getElementById('navbar');
+        window.addEventListener('scroll', () => { if (window.scrollY > 50) { nav.classList.add('scrolled'); } else { nav.classList.remove('scrolled'); } });
+        const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); } }); }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>
