@@ -1,0 +1,180 @@
+functionsDirectory = "/Users/loveomoruyi/ramen-jin-site/netlify/functions"
+functionsDirectoryOrigin = "config-v1"
+headersOrigin = "config"
+redirectsOrigin = "config"
+plugins = []
+
+[build]
+publish = "/Users/loveomoruyi/ramen-jin-site"
+publishOrigin = "config"
+functions = "/Users/loveomoruyi/ramen-jin-site/netlify/functions"
+
+[build.environment]
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]
+
+[functions]
+
+[functions."*"]
+node_bundler = "esbuild"
+
+[[headers]]
+for = "/server/*"
+
+[headers.values]
+X-Robots-Tag = "noindex"
+X-Content-Type-Options = "nosniff"
+
+[[redirects]]
+from = "/pages/menu"
+to = "/pages/menu.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/pages/order"
+to = "/pages/order.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/pages/location"
+to = "/pages/location.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/pages/payment"
+to = "/pages/payment.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/pages/admin"
+to = "/pages/admin.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/pages/receipt"
+to = "/pages/receipt.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/pages/receipts"
+to = "/pages/receipts.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/pages/our-story"
+to = "/pages/our-story.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/pages/sales"
+to = "/pages/sales.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/pages/sales-dashboard"
+to = "/pages/sales-dashboard.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/api/payment/create-intent"
+to = "/.netlify/functions/create-payment-intent"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/api/payment/webhook"
+to = "/.netlify/functions/handle-webhook"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
