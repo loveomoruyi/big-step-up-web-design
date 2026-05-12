@@ -1,0 +1,13 @@
+const navbar=document.querySelector('.navbar');
+const navToggle=document.querySelector('.nav-toggle');
+const navLinks=document.querySelector('.nav-links');
+window.addEventListener('scroll',()=>{if(window.scrollY>50){navbar.classList.add('scrolled')}else{navbar.classList.remove('scrolled')}});
+navToggle.addEventListener('click',()=>{navLinks.classList.toggle('active');navToggle.classList.toggle('active')});
+document.querySelectorAll('.nav-links a').forEach(link=>{link.addEventListener('click',()=>{navLinks.classList.remove('active');navToggle.classList.remove('active')})});
+const observerOptions={threshold:0.1,rootMargin:'0px 0px -50px 0px'};
+const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');observer.unobserve(entry.target)}})},observerOptions);
+document.addEventListener('DOMContentLoaded',()=>{const animateElements=document.querySelectorAll('.project-card,.service-item,.about-left,.about-right,.section-header,.contact-container');animateElements.forEach(el=>{el.classList.add('fade-in');observer.observe(el)})});
+document.querySelectorAll('a[href^="#"]').forEach(anchor=>{anchor.addEventListener('click',function(e){e.preventDefault();const target=document.querySelector(this.getAttribute('href'));if(target){target.scrollIntoView({behavior:'smooth',block:'start'})}})});
+const hero=document.querySelector('.hero');
+window.addEventListener('scroll',()=>{const scrolled=window.scrollY;if(hero&&scrolled<window.innerHeight){hero.style.transform='translateY('+scrolled*0.3+'px)';hero.style.opacity=1-(scrolled/window.innerHeight)*0.5}});
+console.log('%c Big Step Up Web Design ','background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;font-size:16px;padding:10px 20px;border-radius:4px;');
