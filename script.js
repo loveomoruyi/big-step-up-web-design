@@ -425,7 +425,7 @@ function initGridCanvas() {
             var x = i * cellW;
             var distFromCenter = Math.abs(x - cx) / cx;
             var wave = Math.sin(time * 2 + i * 0.3) * 3;
-            var alpha = 0.12 * (1 - distFromCenter * 0.6);
+            var alpha = 0.35 * (1 - distFromCenter * 0.4);
             var hue = Math.sin(time + i * 0.2) > 0 ? '139,92,246' : '201,169,110';
 
             ctx.beginPath();
@@ -440,7 +440,7 @@ function initGridCanvas() {
             var y = j * cellH;
             var distFromCenterY = Math.abs(y - cy) / cy;
             var wave2 = Math.sin(time * 1.5 + j * 0.4) * 2;
-            var alpha2 = 0.1 * (1 - distFromCenterY * 0.5);
+            var alpha2 = 0.3 * (1 - distFromCenterY * 0.4);
             var hue2 = Math.sin(time + j * 0.3) > 0 ? '168,85,247' : '251,191,36';
 
             ctx.beginPath();
@@ -457,7 +457,7 @@ function initGridCanvas() {
                 var nx = ni * cellW;
                 var ny = nj * cellH;
                 var pulse = Math.sin(time * 3 + ni + nj) * 0.5 + 0.5;
-                var nodeAlpha = 0.15 + pulse * 0.2;
+                var nodeAlpha = 0.4 + pulse * 0.3;
                 var nodeSize = 1.5 + pulse * 1.5;
                 var dist = Math.sqrt(Math.pow(nx - cx, 2) + Math.pow(ny - cy, 2));
                 var maxDist = Math.sqrt(cx * cx + cy * cy);
@@ -482,10 +482,10 @@ function initGridCanvas() {
         }
 
         // Center energy core
-        var coreSize = 60 + Math.sin(time * 2) * 20;
+        var coreSize = 120 + Math.sin(time * 2) * 40;
         var coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreSize);
-        coreGrad.addColorStop(0, 'rgba(139,92,246,0.08)');
-        coreGrad.addColorStop(0.5, 'rgba(201,169,110,0.04)');
+        coreGrad.addColorStop(0, 'rgba(139,92,246,0.2)');
+        coreGrad.addColorStop(0.5, 'rgba(201,169,110,0.1)');
         coreGrad.addColorStop(1, 'transparent');
         ctx.beginPath();
         ctx.arc(cx, cy, coreSize, 0, Math.PI * 2);
