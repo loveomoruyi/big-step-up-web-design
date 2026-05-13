@@ -396,3 +396,113 @@ document.addEventListener('DOMContentLoaded', function() {
     initFloatingParticles();
     initPlayground();
 });
+
+
+// ============================================
+// ANIMATED WIREFRAME GRID - Title Backdrop
+// ============================================
+function initGridCanvas() {
+    var canvas = document.getElementById('grid-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var w, h, time = 0;
+    var cols = 20, rows = 15;
+
+    function resize() {
+        w = canvas.width = canvas.parentElement.offsetWidth;
+        h = canvas.height = canvas.parentElement.offsetHeight;
+    }
+
+    function draw() {
+        time += 0.008;
+        ctx.clearRect(0, 0, w, h);
+
+        var cx = w / 2, cy = h / 2;
+        var cellW = w / cols, cellH = h / rows;
+
+        // Draw perspective grid lines
+        for (var i = 0; i <= cols; i++) {
+            var x = i * cellW;
+            var distFromCenter = Math.abs(x - cx) / cx;
+            var wave = Math.sin(time * 2 + i * 0.3) * 3;
+            var alpha = 0.12 * (1 - distFromCenter * 0.6);
+            var hue = Math.sin(time + i * 0.2) > 0 ? '139,92,246' : '201,169,110';
+
+            ctx.beginPath();
+            ctx.moveTo(x + wave, 0);
+            ctx.lineTo(x - wave, h);
+            ctx.strokeStyle = 'rgba(' + hue + ',' + alpha + ')';
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+        }
+
+        for (var j = 0; j <= rows; j++) {
+            var y = j * cellH;
+            var distFromCenterY = Math.abs(y - cy) / cy;
+            var wave2 = Math.sin(time * 1.5 + j * 0.4) * 2;
+            var alpha2 = 0.1 * (1 - distFromCenterY * 0.5);
+            var hue2 = Math.sin(time + j * 0.3) > 0 ? '168,85,247' : '251,191,36';
+
+            ctx.beginPath();
+            ctx.moveTo(0, y + wave2);
+            ctx.lineTo(w, y - wave2);
+            ctx.strokeStyle = 'rgba(' + hue2 + ',' + alpha2 + ')';
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+        }
+
+        // Draw glowing intersection nodes
+        for (var ni = 0; ni <= cols; ni += 4) {
+            for (var nj = 0; nj <= rows; nj += 3) {
+                var nx = ni * cellW;
+                var ny = nj * cellH;
+                var pulse = Math.sin(time * 3 + ni + nj) * 0.5 + 0.5;
+                var nodeAlpha = 0.15 + pulse * 0.2;
+                var nodeSize = 1.5 + pulse * 1.5;
+                var dist = Math.sqrt(Math.pow(nx - cx, 2) + Math.pow(ny - cy, 2));
+                var maxDist = Math.sqrt(cx * cx + cy * cy);
+                var falloff = 1 - (dist / maxDist);
+
+                ctx.beginPath();
+                ctx.arc(nx, ny, nodeSize * falloff, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(139,92,246,' + (nodeAlpha * falloff) + ')';
+                ctx.fill();
+
+                // Glow
+                if (falloff > 0.5) {
+                    ctx.beginPath();
+                    ctx.arc(nx, ny, nodeSize * 4 * falloff, 0, Math.PI * 2);
+                    var g = ctx.createRadialGradient(nx, ny, 0, nx, ny, nodeSize * 4 * falloff);
+                    g.addColorStop(0, 'rgba(139,92,246,' + (nodeAlpha * 0.3 * falloff) + ')');
+                    g.addColorStop(1, 'transparent');
+                    ctx.fillStyle = g;
+                    ctx.fill();
+                }
+            }
+        }
+
+        // Center energy core
+        var coreSize = 60 + Math.sin(time * 2) * 20;
+        var coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreSize);
+        coreGrad.addColorStop(0, 'rgba(139,92,246,0.08)');
+        coreGrad.addColorStop(0.5, 'rgba(201,169,110,0.04)');
+        coreGrad.addColorStop(1, 'transparent');
+        ctx.beginPath();
+        ctx.arc(cx, cy, coreSize, 0, Math.PI * 2);
+        ctx.fillStyle = coreGrad;
+        ctx.fill();
+
+        requestAnimationFrame(draw);
+    }
+
+    resize();
+    window.addEventListener('resize', resize);
+    draw();
+}
+
+// Initialize grid on load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGridCanvas);
+} else {
+    initGridCanvas();
+}
