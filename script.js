@@ -187,3 +187,33 @@ console.log(
     '%c Crafting Premium Digital Experiences ',
     'color: #c9a96e; font-size: 12px; padding: 5px 0;'
 );
+
+// Hero Canvas Particle Animation
+function initHeroCanvas() {
+    const canvas = document.getElementById('hero-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let animationId;
+    let particles = [];
+    function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
+    resize();
+    window.addEventListener('resize', resize);
+    class Particle {
+        constructor() { this.reset(); }
+        reset() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 2 + 0.5; this.speedX = (Math.random() - 0.5) * 0.3; this.speedY = (Math.random() - 0.5) * 0.3; this.opacity = Math.random() * 0.5 + 0.1; this.fadeDir = Math.random() > 0.5 ? 1 : -1; this.fadeSpd = Math.random() * 0.005 + 0.002; }
+        update() { this.x += this.speedX; this.y += this.speedY; this.opacity += this.fadeDir * this.fadeSpd; if (this.opacity >= 0.6) this.fadeDir = -1; if (this.opacity <= 0.05) this.fadeDir = 1; if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset(); }
+        draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = 'rgba(201, 169, 110, ' + this.opacity + ')'; ctx.fill(); }
+    }
+    const count = Math.min(60, Math.floor((canvas.width * canvas.height) / 15000));
+    for (let i = 0; i < count; i++) particles.push(new Particle());
+    function drawConnections() { for (let i = 0; i < particles.length; i++) { for (let j = i + 1; j < particles.length; j++) { const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y; const dist = Math.sqrt(dx * dx + dy * dy); if (dist < 150) { ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = 'rgba(201, 169, 110, ' + ((1 - dist / 150) * 0.15) + ')'; ctx.lineWidth = 0.5; ctx.stroke(); } } } }
+    function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.update(); p.draw(); }); drawConnections(); animationId = requestAnimationFrame(animate); }
+    const hero = document.querySelector('.hero');
+    const obs = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) { animate(); } else { cancelAnimationFrame(animationId); } }); }, { threshold: 0.1 });
+    obs.observe(hero);
+    animate();
+}
+
+function initSectionLabelAnimations() { const labels = document.querySelectorAll('.section-label'); const obs = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.5 }); labels.forEach(l => obs.observe(l)); }
+
+document.addEventListener('DOMContentLoaded', function() { initHeroCanvas(); initSectionLabelAnimations(); });
