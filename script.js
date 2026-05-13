@@ -217,3 +217,182 @@ function initHeroCanvas() {
 function initSectionLabelAnimations() { const labels = document.querySelectorAll('.section-label'); const obs = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.5 }); labels.forEach(l => obs.observe(l)); }
 
 document.addEventListener('DOMContentLoaded', function() { initHeroCanvas(); initSectionLabelAnimations(); });
+
+
+// ============================================
+// GALAXY PARTICLE SYSTEM - 3D Star Field
+// ============================================
+function initGalaxyCanvas() {
+    const canvas = document.getElementById('galaxy-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let width, height, stars = [], mouseX = 0, mouseY = 0;
+
+    function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    }
+
+    function createStars() {
+        stars = [];
+        const count = Math.min(200, Math.floor((width * height) / 8000));
+        for (let i = 0; i < count; i++) {
+            stars.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                z: Math.random() * 3 + 0.5,
+                size: Math.random() * 1.5 + 0.3,
+                color: Math.random() > 0.6 ? 'purple' : Math.random() > 0.4 ? 'gold' : 'white',
+                speedX: (Math.random() - 0.5) * 0.15,
+                speedY: (Math.random() - 0.5) * 0.1,
+                pulse: Math.random() * Math.PI * 2,
+                pulseSpeed: Math.random() * 0.02 + 0.005
+            });
+        }
+    }
+
+    function getColor(star) {
+        var a = 0.3 + Math.sin(star.pulse) * 0.2;
+        if (star.color === 'purple') return 'rgba(139,92,246,' + a + ')';
+        if (star.color === 'gold') return 'rgba(201,169,110,' + a + ')';
+        return 'rgba(255,255,255,' + (a * 0.7) + ')';
+    }
+
+    function drawStars() {
+        ctx.clearRect(0, 0, width, height);
+        var grd1 = ctx.createRadialGradient(width*0.2, height*0.3, 0, width*0.2, height*0.3, width*0.3);
+        grd1.addColorStop(0, 'rgba(139,92,246,0.02)');
+        grd1.addColorStop(1, 'transparent');
+        ctx.fillStyle = grd1;
+        ctx.fillRect(0, 0, width, height);
+        var grd2 = ctx.createRadialGradient(width*0.8, height*0.7, 0, width*0.8, height*0.7, width*0.25);
+        grd2.addColorStop(0, 'rgba(201,169,110,0.015)');
+        grd2.addColorStop(1, 'transparent');
+        ctx.fillStyle = grd2;
+        ctx.fillRect(0, 0, width, height);
+
+        for (var i = 0; i < stars.length; i++) {
+            var star = stars[i];
+            var parallaxX = (mouseX - width/2) * star.z * 0.005;
+            var parallaxY = (mouseY - height/2) * star.z * 0.005;
+            star.x += star.speedX;
+            star.y += star.speedY;
+            star.pulse += star.pulseSpeed;
+            if (star.x < -10) star.x = width + 10;
+            if (star.x > width + 10) star.x = -10;
+            if (star.y < -10) star.y = height + 10;
+            if (star.y > height + 10) star.y = -10;
+            var dx = star.x + parallaxX;
+            var dy = star.y + parallaxY;
+            var ps = star.size * (1 + Math.sin(star.pulse) * 0.3);
+            ctx.beginPath();
+            ctx.arc(dx, dy, ps, 0, Math.PI * 2);
+            ctx.fillStyle = getColor(star);
+            ctx.fill();
+            if (star.size > 1) {
+                ctx.beginPath();
+                ctx.arc(dx, dy, ps * 3, 0, Math.PI * 2);
+                var g = ctx.createRadialGradient(dx, dy, 0, dx, dy, ps * 3);
+                g.addColorStop(0, getColor(star).replace(/[\d.]+\)$/, '0.1)'));
+                g.addColorStop(1, 'transparent');
+                ctx.fillStyle = g;
+                ctx.fill();
+            }
+        }
+        // Connect nearby stars
+        for (var i = 0; i < stars.length; i++) {
+            for (var j = i + 1; j < stars.length; j++) {
+                var ddx = stars[i].x - stars[j].x;
+                var ddy = stars[i].y - stars[j].y;
+                var dist = Math.sqrt(ddx*ddx + ddy*ddy);
+                if (dist < 120) {
+                    ctx.beginPath();
+                    ctx.moveTo(stars[i].x, stars[i].y);
+                    ctx.lineTo(stars[j].x, stars[j].y);
+                    ctx.strokeStyle = 'rgba(139,92,246,' + (0.04*(1-dist/120)) + ')';
+                    ctx.lineWidth = 0.5;
+                    ctx.stroke();
+                }
+            }
+        }
+        requestAnimationFrame(drawStars);
+    }
+
+    window.addEventListener('resize', function() { resize(); createStars(); });
+    document.addEventListener('mousemove', function(e) { mouseX = e.clientX; mouseY = e.clientY; });
+    resize();
+    createStars();
+    drawStars();
+}
+
+// ============================================
+// FLOATING PARTICLES
+// ============================================
+function initFloatingParticles() {
+    var container = document.getElementById('floating-particles');
+    if (!container) return;
+    var count = window.innerWidth < 768 ? 0 : 25;
+    for (var i = 0; i < count; i++) {
+        var p = document.createElement('div');
+        p.className = 'floating-particle';
+        var size = Math.random() * 4 + 2;
+        var isGold = Math.random() > 0.5;
+        var color = isGold ? 'rgba(201,169,110,0.6)' : 'rgba(139,92,246,0.5)';
+        var glow = isGold ? 'rgba(201,169,110,0.3)' : 'rgba(139,92,246,0.3)';
+        p.style.cssText = 'width:'+size+'px;height:'+size+'px;left:'+Math.random()*100+'%;background:'+color+';box-shadow:0 0 '+(size*2)+'px '+glow+';animation-duration:'+(Math.random()*20+15)+'s;animation-delay:'+(Math.random()*20)+'s;';
+        container.appendChild(p);
+    }
+}
+
+// ============================================
+// TEMPLATE PLAYGROUND
+// ============================================
+function initPlayground() {
+    var card = document.getElementById('preview-card');
+    if (!card) return;
+
+    document.querySelectorAll('.color-swatches').forEach(function(group) {
+        var target = group.dataset.target;
+        group.querySelectorAll('.swatch').forEach(function(swatch) {
+            swatch.addEventListener('click', function() {
+                group.querySelectorAll('.swatch').forEach(function(s) { s.classList.remove('active'); });
+                swatch.classList.add('active');
+                var c = swatch.dataset.color;
+                if (target === 'bg') {
+                    card.style.background = c === '#ffffff' ? 'rgba(255,255,255,0.95)' : c === '#0a0a0a' ? 'rgba(255,255,255,0.03)' : c;
+                    var isLight = c === '#ffffff';
+                    card.querySelector('.preview-title').style.color = isLight ? '#1a1a2e' : 'white';
+                    card.querySelector('.preview-text').style.color = isLight ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.6)';
+                } else if (target === 'accent') {
+                    card.querySelector('.preview-badge').style.background = 'linear-gradient(135deg,'+c+','+c+'88)';
+                    card.querySelector('.preview-btn').style.background = 'linear-gradient(135deg,'+c+','+c+'88)';
+                    card.querySelectorAll('.dot')[0].style.background = c;
+                }
+            });
+        });
+    });
+
+    document.querySelectorAll('.font-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.font-btn').forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            card.querySelector('.preview-title').style.fontFamily = btn.dataset.font;
+            card.querySelector('.preview-text').style.fontFamily = btn.dataset.font;
+        });
+    });
+
+    document.querySelectorAll('.style-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.style-btn').forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            card.className = 'preview-card style-' + btn.dataset.style;
+        });
+    });
+}
+
+// Initialize enhanced effects
+document.addEventListener('DOMContentLoaded', function() {
+    initGalaxyCanvas();
+    initFloatingParticles();
+    initPlayground();
+});
