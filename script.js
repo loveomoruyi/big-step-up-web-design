@@ -506,3 +506,125 @@ if (document.readyState === 'loading') {
 } else {
     initGridCanvas();
 }
+
+// === FRAMER & SHOWIT INSPIRED DYNAMIC BACKGROUND ANIMATIONS ===
+
+// Gradient Mesh Canvas Animation
+class GradientMesh {
+    constructor() {
+        this.canvas = document.getElementById('gradient-mesh-canvas');
+        if (!this.canvas) return;
+        this.ctx = this.canvas.getContext('2d');
+        this.points = [];
+        this.time = 0;
+        this.resize();
+        this.initPoints();
+        this.animate();
+        window.addEventListener('resize', () => this.resize());
+    }
+    resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+    }
+    initPoints() {
+        const colors = [
+            {r:139,g:92,b:246}, {r:6,g:182,b:212},
+            {r:236,g:72,b:153}, {r:99,g:102,b:241},
+            {r:249,g:115,b:22}, {r:16,g:185,b:129}
+        ];
+        for (let i = 0; i < 8; i++) {
+            this.points.push({
+                x: Math.random() * this.canvas.width,
+                y: Math.random() * this.canvas.height,
+                vx: (Math.random() - 0.5) * 0.8,
+                vy: (Math.random() - 0.5) * 0.8,
+                radius: 200 + Math.random() * 300,
+                color: colors[i % colors.length],
+                phase: Math.random() * Math.PI * 2
+            });
+        }
+    }
+    animate() {
+        this.time += 0.005;
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.points.forEach((p, i) => {
+            p.x += p.vx + Math.sin(this.time + p.phase) * 0.5;
+            p.y += p.vy + Math.cos(this.time + p.phase) * 0.5;
+            if (p.x < -100) p.x = this.canvas.width + 100;
+            if (p.x > this.canvas.width + 100) p.x = -100;
+            if (p.y < -100) p.y = this.canvas.height + 100;
+            if (p.y > this.canvas.height + 100) p.y = -100;
+            const pulse = Math.sin(this.time * 2 + p.phase) * 0.3 + 0.7;
+            const grad = this.ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius * pulse);
+            grad.addColorStop(0, 'rgba('+p.color.r+','+p.color.g+','+p.color.b+',0.15)');
+            grad.addColorStop(0.5, 'rgba('+p.color.r+','+p.color.g+','+p.color.b+',0.05)');
+            grad.addColorStop(1, 'rgba('+p.color.r+','+p.color.g+','+p.color.b+',0)');
+            this.ctx.fillStyle = grad;
+            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        });
+        requestAnimationFrame(() => this.animate());
+    }
+}
+
+// Interactive Parallax on Mouse Move
+class ParallaxController {
+    constructor() {
+        this.layers = document.querySelectorAll('.parallax-layer');
+        this.blobs = document.querySelectorAll('.morph-blob');
+        this.shapes = document.querySelectorAll('.float-shape');
+        this.mouseX = 0;
+        this.mouseY = 0;
+        this.targetX = 0;
+        this.targetY = 0;
+        document.addEventListener('mousemove', (e) => {
+            this.targetX = (e.clientX / window.innerWidth - 0.5) * 2;
+            this.targetY = (e.clientY / window.innerHeight - 0.5) * 2;
+        });
+        this.animate();
+    }
+    animate() {
+        this.mouseX += (this.targetX - this.mouseX) * 0.05;
+        this.mouseY += (this.targetY - this.mouseY) * 0.05;
+        this.layers.forEach((layer, i) => {
+            const depth = (i + 1) * 15;
+            const tx = this.mouseX * depth;
+            const ty = this.mouseY * depth;
+            layer.style.transform = 'translate(' + tx + 'px, ' + ty + 'px)';
+        });
+        this.blobs.forEach((blob, i) => {
+            const depth = (i + 1) * 8;
+            blob.style.marginLeft = (this.mouseX * depth) + 'px';
+            blob.style.marginTop = (this.mouseY * depth) + 'px';
+        });
+        requestAnimationFrame(() => this.animate());
+    }
+}
+
+// Scroll-triggered intensity boost
+class ScrollAnimator {
+    constructor() {
+        this.hero = document.querySelector('.hero');
+        this.blobContainer = document.querySelector('.blob-container');
+        this.streaks = document.querySelector('.light-streaks');
+        window.addEventListener('scroll', () => this.onScroll());
+    }
+    onScroll() {
+        if (!this.hero) return;
+        const rect = this.hero.getBoundingClientRect();
+        const progress = Math.max(0, Math.min(1, -rect.top / rect.height));
+        if (this.blobContainer) {
+            this.blobContainer.style.opacity = 1 - progress * 0.5;
+            this.blobContainer.style.transform = 'scale(' + (1 + progress * 0.2) + ')';
+        }
+        if (this.streaks) {
+            this.streaks.style.opacity = 1 - progress * 0.7;
+        }
+    }
+}
+
+// Initialize all enhanced animations
+document.addEventListener('DOMContentLoaded', function() {
+    new GradientMesh();
+    new ParallaxController();
+    new ScrollAnimator();
+});
