@@ -1,300 +1,190 @@
-// Plexus Digital FX Technology Background Animation
-// Enhanced with golden streaming highlights, breathing effects, and shape highlighting
-
 (function() {
-    var canvas = document.createElement('canvas');
+    const canvas = document.createElement('canvas');
     canvas.id = 'plexus-canvas';
     canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;';
     document.body.insertBefore(canvas, document.body.firstChild);
-    var ctx = canvas.getContext('2d');
-    var width, height, particles = [], mouse = {x:null,y:null,radius:150};
-    var config = {count:80,size:2,lineDist:150,speed:0.5,color:'200,180,130'};
-    var time = 0;
-    var highlightedShapes = [];
-    var streamingLines = [];
-    var breathCycle = 0;
+    const ctx = canvas.getContext('2d');
+    const config = { count: 80, size: 2, lineDist: 150, speed: 0.5, color: '200,180,130' };
+    let W, H, particles = [], streams = [], mouse = { x: -1000, y: -1000 }, breathCycle = 0, glowPoints = [];
 
-    function resize(){width=canvas.width=window.innerWidth;height=canvas.height=window.innerHeight;}
+    function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; initGlowPoints(); }
 
-    function Particle(){
-        this.x=Math.random()*width;
-        this.y=Math.random()*height;
-        this.vx=(Math.random()-0.5)*config.speed;
-        this.vy=(Math.random()-0.5)*config.speed;
-        this.size=Math.random()*config.size+0.5;
-        this.opacity=Math.random()*0.5+0.3;
-        this.baseOpacity=this.opacity;
-    }
-
-    Particle.prototype.update=function(){
-        if(mouse.x!==null){
-            var dx=this.x-mouse.x,dy=this.y-mouse.y,dist=Math.sqrt(dx*dx+dy*dy);
-            if(dist<mouse.radius){
-                var force=(mouse.radius-dist)/mouse.radius;
-                this.vx+=dx/dist*force*0.02;
-                this.vy+=dy/dist*force*0.02;
-            }
-        }
-        var spd=Math.sqrt(this.vx*this.vx+this.vy*this.vy);
-        if(spd>config.speed*2){this.vx=this.vx/spd*config.speed*2;this.vy=this.vy/spd*config.speed*2;}
-        this.x+=this.vx;this.y+=this.vy;
-        if(this.x<0||this.x>width)this.vx*=-1;
-        if(this.y<0||this.y>height)this.vy*=-1;
-        if(this.x<0)this.x=0;if(this.x>width)this.x=width;
-        if(this.y<0)this.y=0;if(this.y>height)this.y=height;
-        // Breathing effect on particle opacity
-        this.opacity = this.baseOpacity + Math.sin(time * 0.002 + this.x * 0.01) * 0.15;
-    };
-
-    Particle.prototype.draw=function(){
-        ctx.beginPath();
-        ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
-        ctx.fillStyle='rgba('+config.color+','+this.opacity+')';
-        ctx.fill();
-    };
-
-    function init(){
-        particles=[];
-        for(var i=0;i<config.count;i++)particles.push(new Particle());
-        // Initialize streaming lines
-        for(var i=0;i<5;i++){
-            streamingLines.push({
-                startIdx: Math.floor(Math.random()*config.count),
-                endIdx: Math.floor(Math.random()*config.count),
-                progress: 0,
-                speed: 0.005 + Math.random()*0.008,
-                active: true,
-                delay: Math.random()*200
-            });
+    function initGlowPoints() {
+        glowPoints = [];
+        for (let i = 0; i < 4; i++) {
+            glowPoints.push({ x: Math.random() * W, y: Math.random() * H, radius: 150 + Math.random() * 100, phase: Math.random() * Math.PI * 2, speedX: (Math.random() - 0.5) * 0.3, speedY: (Math.random() - 0.5) * 0.3 });
         }
     }
 
-    // Find triangles/polygons formed by connected particles
-    function findShapes(){
-        var shapes = [];
-        var len = particles.length;
-        for(var i=0;i<len;i++){
-            for(var j=i+1;j<len;j++){
-                var dx1=particles[i].x-particles[j].x;
-                var dy1=particles[i].y-particles[j].y;
-                var d1=Math.sqrt(dx1*dx1+dy1*dy1);
-                if(d1>config.lineDist)continue;
-                for(var k=j+1;k<len;k++){
-                    var dx2=particles[i].x-particles[k].x;
-                    var dy2=particles[i].y-particles[k].y;
-                    var d2=Math.sqrt(dx2*dx2+dy2*dy2);
-                    if(d2>config.lineDist)continue;
-                    var dx3=particles[j].x-particles[k].x;
-                    var dy3=particles[j].y-particles[k].y;
-                    var d3=Math.sqrt(dx3*dx3+dy3*dy3);
-                    if(d3>config.lineDist)continue;
-                    // Found a triangle
-                    shapes.push({
-                        points:[particles[i],particles[j],particles[k]],
-                        avgDist:(d1+d2+d3)/3
-                    });
-                    if(shapes.length>15)return shapes; // Limit for performance
+    class Particle {
+        constructor() {
+            this.x = Math.random() * W; this.y = Math.random() * H;
+            this.vx = (Math.random() - 0.5) * config.speed; this.vy = (Math.random() - 0.5) * config.speed;
+            this.baseSize = config.size * (0.5 + Math.random() * 0.5);
+            this.breathPhase = Math.random() * Math.PI * 2;
+            this.breathSpeed = 0.01 + Math.random() * 0.02;
+        }
+        update() {
+            this.x += this.vx; this.y += this.vy;
+            if (this.x < 0 || this.x > W) this.vx *= -1;
+            if (this.y < 0 || this.y > H) this.vy *= -1;
+            this.breathPhase += this.breathSpeed;
+            let dx = this.x - mouse.x, dy = this.y - mouse.y;
+            let dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 150) { let force = (150 - dist) / 150 * 0.5; this.vx += (dx / dist) * force; this.vy += (dy / dist) * force; }
+            this.vx *= 0.99; this.vy *= 0.99;
+        }
+        draw() {
+            let breathAlpha = 0.3 + Math.sin(this.breathPhase) * 0.2;
+            let breathSize = this.baseSize * (1 + Math.sin(this.breathPhase) * 0.3);
+            ctx.beginPath(); ctx.arc(this.x, this.y, breathSize, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(' + config.color + ',' + breathAlpha + ')';
+            ctx.fill();
+        }
+    }
+
+    function createStream() {
+        return { from: Math.floor(Math.random() * config.count), to: Math.floor(Math.random() * config.count), progress: 0, speed: 0.012 + Math.random() * 0.018, delay: Math.random() * 80, trail: [] };
+    }
+
+    function init() {
+        particles = []; streams = [];
+        for (let i = 0; i < config.count; i++) particles.push(new Particle());
+        for (let i = 0; i < 12; i++) streams.push(createStream());
+    }
+
+    function getDist(a, b) { let dx = a.x - b.x, dy = a.y - b.y; return Math.sqrt(dx * dx + dy * dy); }
+
+    function findShapes() {
+        let shapes = [], len = particles.length;
+        for (let i = 0; i < len; i++) {
+            for (let j = i + 1; j < len; j++) {
+                let d1 = getDist(particles[i], particles[j]);
+                if (d1 > config.lineDist) continue;
+                for (let k = j + 1; k < len; k++) {
+                    let d2 = getDist(particles[i], particles[k]);
+                    let d3 = getDist(particles[j], particles[k]);
+                    if (d2 < config.lineDist && d3 < config.lineDist) {
+                        shapes.push([particles[i], particles[j], particles[k]]);
+                        if (shapes.length > 15) return shapes;
+                    }
                 }
             }
         }
         return shapes;
     }
 
-    // Update highlighted shapes periodically
-    var shapeTimer = 0;
-    function updateHighlightedShapes(){
-        shapeTimer++;
-        if(shapeTimer % 120 === 0){ // Every ~2 seconds at 60fps
-            var allShapes = findShapes();
-            highlightedShapes = [];
-            // Pick 3-5 random shapes to highlight
-            var count = Math.min(allShapes.length, 3 + Math.floor(Math.random()*3));
-            var shuffled = allShapes.sort(function(){return Math.random()-0.5;});
-            for(var i=0;i<count;i++){
-                highlightedShapes.push({
-                    shape: shuffled[i],
-                    fadeIn: 0,
-                    phase: Math.random() * Math.PI * 2
-                });
-            }
-        }
-    }
-
-    // Draw shapes with golden pulsing fill
-    function drawShapes(){
-        for(var i=0;i<highlightedShapes.length;i++){
-            var hs = highlightedShapes[i];
-            if(!hs || !hs.shape)continue;
-            var pts = hs.shape.points;
-            // Breathing/pulsing opacity
-            hs.fadeIn = Math.min(hs.fadeIn + 0.02, 1);
-            var pulse = Math.sin(time * 0.003 + hs.phase) * 0.5 + 0.5;
-            var alpha = pulse * 0.06 * hs.fadeIn; // Very subtle golden fill
-
-            ctx.beginPath();
-            ctx.moveTo(pts[0].x, pts[0].y);
-            ctx.lineTo(pts[1].x, pts[1].y);
-            ctx.lineTo(pts[2].x, pts[2].y);
-            ctx.closePath();
-
-            // Golden gradient fill
-            var centerX = (pts[0].x + pts[1].x + pts[2].x) / 3;
-            var centerY = (pts[0].y + pts[1].y + pts[2].y) / 3;
-            var grad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, hs.shape.avgDist * 0.7);
-            grad.addColorStop(0, 'rgba(255, 200, 80, ' + (alpha * 1.5) + ')');
-            grad.addColorStop(0.5, 'rgba(218, 165, 50, ' + alpha + ')');
-            grad.addColorStop(1, 'rgba(180, 130, 40, ' + (alpha * 0.3) + ')');
-            ctx.fillStyle = grad;
+    function drawShapes() {
+        let shapes = findShapes();
+        let pulse = Math.sin(breathCycle * 0.5) * 0.5 + 0.5;
+        for (let i = 0; i < shapes.length; i++) {
+            let s = shapes[i];
+            ctx.beginPath(); ctx.moveTo(s[0].x, s[0].y); ctx.lineTo(s[1].x, s[1].y); ctx.lineTo(s[2].x, s[2].y); ctx.closePath();
+            ctx.fillStyle = 'rgba(' + config.color + ',' + (0.02 + pulse * 0.02) + ')';
             ctx.fill();
         }
     }
 
-    function drawLines(){
-        var len=particles.length;
-        for(var i=0;i<len;i++){
-            for(var j=i+1;j<len;j++){
-                var dx=particles[i].x-particles[j].x;
-                var dy=particles[i].y-particles[j].y;
-                var dist=Math.sqrt(dx*dx+dy*dy);
-                if(dist<config.lineDist){
-                    var baseAlpha = (1-dist/config.lineDist)*0.4;
-                    // Base line with subtle breathing
-                    var breathAlpha = baseAlpha * (0.8 + Math.sin(breathCycle + i*0.1)*0.2);
-                    ctx.beginPath();
-                    ctx.moveTo(particles[i].x,particles[i].y);
-                    ctx.lineTo(particles[j].x,particles[j].y);
-                    ctx.strokeStyle='rgba('+config.color+','+breathAlpha+')';
-                    ctx.lineWidth=0.5;
-                    ctx.stroke();
+    function drawLines() {
+        let breathAlpha = 0.08 + Math.sin(breathCycle) * 0.03;
+        for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+                let d = getDist(particles[i], particles[j]);
+                if (d < config.lineDist) {
+                    let alpha = (1 - d / config.lineDist) * breathAlpha;
+                    ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.strokeStyle = 'rgba(' + config.color + ',' + alpha + ')';
+                    ctx.lineWidth = 0.5; ctx.stroke();
                 }
             }
         }
     }
 
-    // Draw golden streaming highlights along lines
-    function drawStreamingHighlights(){
-        var len = particles.length;
-        for(var s=0;s<streamingLines.length;s++){
-            var stream = streamingLines[s];
-            if(time < stream.delay)continue;
-
+    function drawStreamingHighlights() {
+        for (let i = 0; i < streams.length; i++) {
+            let stream = streams[i];
+            if (stream.delay > 0) { stream.delay--; continue; }
             stream.progress += stream.speed;
-            if(stream.progress > 1){
-                // Reset with new random connection
-                stream.progress = 0;
-                stream.startIdx = Math.floor(Math.random()*len);
-                stream.endIdx = Math.floor(Math.random()*len);
-                stream.speed = 0.005 + Math.random()*0.008;
-                stream.delay = time + Math.random()*60;
+            if (stream.progress >= 1) { streams[i] = createStream(); streams[i].delay = Math.random() * 80; continue; }
+            let p1 = particles[stream.from], p2 = particles[stream.to];
+            if (!p1 || !p2) continue;
+            let currentX = p1.x + (p2.x - p1.x) * stream.progress;
+            let currentY = p1.y + (p2.y - p1.y) * stream.progress;
+            stream.trail.push({ x: currentX, y: currentY });
+            if (stream.trail.length > 10) stream.trail.shift();
+            let streamAlpha = Math.sin(stream.progress * Math.PI) * 0.85;
+            for (let t = 0; t < stream.trail.length; t++) {
+                let tp = stream.trail[t];
+                let tf = t / stream.trail.length;
+                let ta = streamAlpha * tf * 0.6;
+                if (ta <= 0) continue;
+                let tr = 8 + tf * 12;
+                let grad = ctx.createRadialGradient(tp.x, tp.y, 0, tp.x, tp.y, tr);
+                grad.addColorStop(0, 'rgba(' + config.color + ',' + ta + ')');
+                grad.addColorStop(1, 'rgba(' + config.color + ',0)');
+                ctx.beginPath(); ctx.arc(tp.x, tp.y, tr, 0, Math.PI * 2); ctx.fillStyle = grad; ctx.fill();
             }
-
-            var p1 = particles[stream.startIdx];
-            var p2 = particles[stream.endIdx];
-            if(!p1 || !p2)continue;
-
-            var dx = p2.x - p1.x;
-            var dy = p2.y - p1.y;
-            var dist = Math.sqrt(dx*dx+dy*dy);
-            if(dist > config.lineDist * 1.5)continue; // Only highlight connected-ish lines
-
-            // Calculate streaming point position
-            var px = p1.x + dx * stream.progress;
-            var py = p1.y + dy * stream.progress;
-
-            // Golden streaming glow
-            var streamAlpha = Math.sin(stream.progress * Math.PI) * 0.7; // Fade in/out along path
-            var grad = ctx.createRadialGradient(px, py, 0, px, py, 20);
-            grad.addColorStop(0, 'rgba(255, 215, 80, ' + (streamAlpha * 0.6) + ')');
-            grad.addColorStop(0.4, 'rgba(218, 175, 50, ' + (streamAlpha * 0.3) + ')');
-            grad.addColorStop(1, 'rgba(180, 140, 30, 0)');
-
-            ctx.beginPath();
-            ctx.arc(px, py, 20, 0, Math.PI*2);
-            ctx.fillStyle = grad;
-            ctx.fill();
-
-            // Bright core line segment near the streaming point
-            var segLen = 0.15; // Length of bright segment
-            var segStart = Math.max(0, stream.progress - segLen/2);
-            var segEnd = Math.min(1, stream.progress + segLen/2);
-            var sx = p1.x + dx * segStart;
-            var sy = p1.y + dy * segStart;
-            var ex = p1.x + dx * segEnd;
-            var ey = p1.y + dy * segEnd;
-
-            ctx.beginPath();
-            ctx.moveTo(sx, sy);
-            ctx.lineTo(ex, ey);
-            var lineGrad = ctx.createLinearGradient(sx, sy, ex, ey);
-            lineGrad.addColorStop(0, 'rgba(255, 200, 80, 0)');
-            lineGrad.addColorStop(0.5, 'rgba(255, 215, 100, ' + (streamAlpha * 0.8) + ')');
-            lineGrad.addColorStop(1, 'rgba(255, 200, 80, 0)');
-            ctx.strokeStyle = lineGrad;
-            ctx.lineWidth = 2;
-            ctx.stroke();
+            if (stream.trail.length > 1) {
+                ctx.beginPath(); ctx.moveTo(stream.trail[0].x, stream.trail[0].y);
+                for (let t = 1; t < stream.trail.length; t++) ctx.lineTo(stream.trail[t].x, stream.trail[t].y);
+                ctx.strokeStyle = 'rgba(' + config.color + ',' + (streamAlpha * 0.4) + ')';
+                ctx.lineWidth = 2; ctx.stroke();
+            }
+            let mg = ctx.createRadialGradient(currentX, currentY, 0, currentX, currentY, 25);
+            mg.addColorStop(0, 'rgba(' + config.color + ',' + streamAlpha + ')');
+            mg.addColorStop(0.4, 'rgba(' + config.color + ',' + (streamAlpha * 0.5) + ')');
+            mg.addColorStop(1, 'rgba(' + config.color + ',0)');
+            ctx.beginPath(); ctx.arc(currentX, currentY, 25, 0, Math.PI * 2); ctx.fillStyle = mg; ctx.fill();
+            let segStart = Math.max(0, stream.progress - 0.15);
+            let sx = p1.x + (p2.x - p1.x) * segStart, sy = p1.y + (p2.y - p1.y) * segStart;
+            ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(currentX, currentY);
+            ctx.strokeStyle = 'rgba(' + config.color + ',' + (streamAlpha * 0.7) + ')';
+            ctx.lineWidth = 2; ctx.stroke();
         }
     }
 
-    // Draw additional ambient golden glow points that breathe
-    function drawAmbientGlow(){
-        var glowCount = 3;
-        for(var i=0;i<glowCount;i++){
-            var idx = Math.floor((time * 0.001 + i * 33.33) % particles.length);
-            var p = particles[idx];
-            if(!p)continue;
-            var pulse = Math.sin(time * 0.002 + i * 2.1) * 0.5 + 0.5;
-            var alpha = pulse * 0.15;
-            var grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 35);
-            grad.addColorStop(0, 'rgba(255, 200, 80, ' + alpha + ')');
-            grad.addColorStop(0.5, 'rgba(200, 160, 50, ' + (alpha*0.4) + ')');
-            grad.addColorStop(1, 'rgba(150, 120, 30, 0)');
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, 35, 0, Math.PI*2);
-            ctx.fillStyle = grad;
-            ctx.fill();
+    function drawAmbientGlow() {
+        for (let i = 0; i < glowPoints.length; i++) {
+            let gp = glowPoints[i];
+            gp.x += gp.speedX; gp.y += gp.speedY;
+            if (gp.x < 0 || gp.x > W) gp.speedX *= -1;
+            if (gp.y < 0 || gp.y > H) gp.speedY *= -1;
+            let alpha = 0.03 + Math.sin(breathCycle + gp.phase) * 0.015;
+            let grad = ctx.createRadialGradient(gp.x, gp.y, 0, gp.x, gp.y, gp.radius);
+            grad.addColorStop(0, 'rgba(' + config.color + ',' + alpha + ')');
+            grad.addColorStop(1, 'rgba(' + config.color + ',0)');
+            ctx.beginPath(); ctx.arc(gp.x, gp.y, gp.radius, 0, Math.PI * 2); ctx.fillStyle = grad; ctx.fill();
         }
     }
 
-    function animate(){
-        ctx.clearRect(0,0,width,height);
-        time++;
-        breathCycle += 0.015; // Slow breathing cycle
-
-        // Update and draw particles
-        particles.forEach(function(p){p.update();p.draw();});
-
-        // Draw base connecting lines with breathing
-        drawLines();
-
-        // Draw golden streaming highlights
-        drawStreamingHighlights();
-
-        // Update and draw highlighted shapes
-        updateHighlightedShapes();
-        drawShapes();
-
-        // Draw ambient glow
-        drawAmbientGlow();
-
+    function animate() {
+        ctx.clearRect(0, 0, W, H);
+        breathCycle += 0.015;
+        for (let i = 0; i < particles.length; i++) particles[i].update();
+        drawAmbientGlow(); drawShapes(); drawLines(); drawStreamingHighlights();
+        for (let i = 0; i < particles.length; i++) particles[i].draw();
         requestAnimationFrame(animate);
     }
 
-    window.addEventListener('mousemove',function(e){mouse.x=e.clientX;mouse.y=e.clientY;});
-    window.addEventListener('mouseout',function(){mouse.x=null;mouse.y=null;});
-    window.addEventListener('resize',resize);
+    document.addEventListener('mousemove', function(e) { mouse.x = e.clientX; mouse.y = e.clientY; });
+    document.addEventListener('mouseleave', function() { mouse.x = -1000; mouse.y = -1000; });
+    window.addEventListener('resize', function() { resize(); });
 
-    resize();init();animate();
+    resize(); init(); animate();
 
-    // Smooth text animations
-    function initTextAnim(){
-        var eyebrow=document.querySelector('.hero-eyebrow');
-        var lines=document.querySelectorAll('.title-line');
-        var subtitle=document.querySelector('.hero-subtitle');
-        var cta=document.querySelector('.hero-cta');
-        if(eyebrow){eyebrow.style.opacity='0';eyebrow.style.transform='translateY(20px)';setTimeout(function(){eyebrow.style.transition='opacity 0.8s ease, transform 0.8s ease';eyebrow.style.opacity='1';eyebrow.style.transform='translateY(0)';},300);}
-        lines.forEach(function(l,i){l.style.opacity='0';l.style.transform='translateY(40px)';setTimeout(function(){l.style.transition='opacity 0.8s ease, transform 0.8s ease';l.style.opacity='1';l.style.transform='translateY(0)';},500+i*200);});
-        if(subtitle){subtitle.style.opacity='0';subtitle.style.transform='translateY(20px)';setTimeout(function(){subtitle.style.transition='opacity 0.8s ease, transform 0.8s ease';subtitle.style.opacity='1';subtitle.style.transform='translateY(0)';},1200);}
-        if(cta){cta.style.opacity='0';cta.style.transform='translateY(20px)';setTimeout(function(){cta.style.transition='opacity 0.8s ease, transform 0.8s ease';cta.style.opacity='1';cta.style.transform='translateY(0)';},1500);}
+    function initTextAnim() {
+        var lines = document.querySelectorAll('.title-line');
+        lines.forEach(function(line, i) {
+            line.style.opacity = '0'; line.style.transform = 'translateY(20px)';
+            line.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+            line.style.transitionDelay = (i * 0.2) + 's';
+            setTimeout(function() { line.style.opacity = '1'; line.style.transform = 'translateY(0)'; }, 100);
+        });
+        var subtitle = document.querySelector('.hero-subtitle');
+        if (subtitle) { subtitle.style.opacity = '0'; subtitle.style.transition = 'opacity 1.2s ease'; subtitle.style.transitionDelay = '0.8s'; setTimeout(function() { subtitle.style.opacity = '1'; }, 100); }
+        var cta = document.querySelector('.hero-cta');
+        if (cta) { cta.style.opacity = '0'; cta.style.transition = 'opacity 1s ease'; cta.style.transitionDelay = '1.2s'; setTimeout(function() { cta.style.opacity = '1'; }, 100); }
     }
-    if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',initTextAnim);}else{initTextAnim();}
+
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initTextAnim); } else { initTextAnim(); }
 })();
