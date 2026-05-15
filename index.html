@@ -10,8 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <canvas id="galaxy-canvas" class="galaxy-canvas"></canvas>
-    <div class="floating-particles" id="floating-particles"></div>
     <div class="cursor-dot"></div>
     <div class="cursor-outline"></div>
     
@@ -26,69 +24,13 @@
                 <a href="#work">Work</a>
                 <a href="#about">About</a>
                 <a href="#services">Services</a>
-                <a href="#playground">Playground</a>
                 <a href="#contact" class="nav-cta">Get in Touch</a>
             </div>
         </div>
     </nav>
 
     <section class="hero">
-        <canvas id="hero-canvas" class="hero-canvas"></canvas>
-    <!-- Framer-Inspired Morphing Blob Backgrounds -->
-    <div class="blob-container">
-        <div class="morph-blob blob-1"></div>
-        <div class="morph-blob blob-2"></div>
-        <div class="morph-blob blob-3"></div>
-        <div class="morph-blob blob-4"></div>
-        <div class="morph-blob blob-5"></div>
-    </div>
-    
-    <!-- Showit-Inspired Flowing Gradient Mesh -->
-    <canvas id="gradient-mesh-canvas" class="gradient-mesh"></canvas>
-    
-    <!-- Kinetic Light Streaks -->
-    <div class="light-streaks">
-        <div class="streak streak-1"></div>
-        <div class="streak streak-2"></div>
-        <div class="streak streak-3"></div>
-        <div class="streak streak-4"></div>
-        <div class="streak streak-5"></div>
-        <div class="streak streak-6"></div>
-    </div>
-    
-    <!-- Floating Geometric Shapes (Framer-style) -->
-    <div class="floating-shapes">
-        <div class="float-shape shape-circle"></div>
-        <div class="float-shape shape-ring"></div>
-        <div class="float-shape shape-square"></div>
-        <div class="float-shape shape-triangle"></div>
-        <div class="float-shape shape-dot-grid"></div>
-    </div>
-    
-    <!-- Parallax Depth Layers -->
-    <div class="parallax-layers">
-        <div class="parallax-layer layer-far"></div>
-        <div class="parallax-layer layer-mid"></div>
-        <div class="parallax-layer layer-near"></div>
-    </div>
-    
-    <!-- Noise Texture Overlay -->
-    <div class="noise-overlay"></div>
-
-        <div class="hero-gradient-orbs">
-            <div class="gradient-orb orb-1"></div>
-            <div class="gradient-orb orb-2"></div>
-            <div class="gradient-orb orb-3"></div>
-        </div>
-        <div class="aurora-overlay"></div>
         <div class="hero-bg-text" aria-hidden="true">DESIGN</div>
-        <div class="title-backdrop">
-            <canvas id="grid-canvas" class="grid-canvas"></canvas>
-            <div class="radiant-glow"></div>
-            <div class="energy-ring ring-1"></div>
-            <div class="energy-ring ring-2"></div>
-            <div class="energy-ring ring-3"></div>
-        </div>
         <div class="hero-content">
             <div class="hero-eyebrow">
                 <span class="eyebrow-line"></span>
@@ -316,77 +258,6 @@
                     </div>
                     <h3>UI/UX Design</h3>
                     <p>User-centered design that balances aesthetics with functionality. We create intuitive digital journeys.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-
-    <!-- Template Playground Section -->
-    <section id="playground" class="playground-section">
-        <div class="section-container">
-            <div class="section-header">
-                <span class="section-number">05</span>
-                <h2 class="section-title">Template<br>Playground</h2>
-                <p class="section-subtitle">Experiment with colors, fonts, and layouts. Design your vision in real-time.</p>
-            </div>
-            <div class="playground-content">
-                <div class="playground-controls">
-                    <div class="control-group">
-                        <label class="control-label">Background</label>
-                        <div class="color-swatches" data-target="bg">
-                            <button class="swatch active" data-color="#0a0a0a" style="background:#0a0a0a"></button>
-                            <button class="swatch" data-color="#1a0a2e" style="background:#1a0a2e"></button>
-                            <button class="swatch" data-color="#0a1628" style="background:#0a1628"></button>
-                            <button class="swatch" data-color="#1a1a2e" style="background:#1a1a2e"></button>
-                            <button class="swatch" data-color="#ffffff" style="background:#ffffff"></button>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label">Accent Color</label>
-                        <div class="color-swatches" data-target="accent">
-                            <button class="swatch active" data-color="#c9a96e" style="background:#c9a96e"></button>
-                            <button class="swatch" data-color="#8b5cf6" style="background:#8b5cf6"></button>
-                            <button class="swatch" data-color="#ec4899" style="background:#ec4899"></button>
-                            <button class="swatch" data-color="#06b6d4" style="background:#06b6d4"></button>
-                            <button class="swatch" data-color="#fbbf24" style="background:#fbbf24"></button>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label">Font Style</label>
-                        <div class="font-options">
-                            <button class="font-btn active" data-font="'Inter', sans-serif">Modern</button>
-                            <button class="font-btn" data-font="'Playfair Display', serif">Classic</button>
-                            <button class="font-btn" data-font="'Courier New', monospace">Code</button>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label">Card Style</label>
-                        <div class="style-options">
-                            <button class="style-btn active" data-style="glass">Glass</button>
-                            <button class="style-btn" data-style="solid">Solid</button>
-                            <button class="style-btn" data-style="gradient">Gradient</button>
-                            <button class="style-btn" data-style="neon">Neon</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="playground-preview">
-                    <div class="preview-card" id="preview-card">
-                        <div class="preview-card-glow"></div>
-                        <div class="preview-header">
-                            <span class="preview-badge">Preview</span>
-                            <h3 class="preview-title">Your Design</h3>
-                        </div>
-                        <p class="preview-text">See your template choices come to life. Experiment freely with different combinations.</p>
-                        <div class="preview-cta">
-                            <button class="preview-btn">Explore More</button>
-                        </div>
-                        <div class="preview-dots">
-                            <span class="dot"></span>
-                            <span class="dot"></span>
-                            <span class="dot"></span>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
