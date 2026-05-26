@@ -1020,3 +1020,129 @@ img {
         padding: var(--space-md);
     }
 }
+
+/* ===== Portfolio Templates Tab Section ===== */
+.templates-section {
+    padding: 120px 0;
+    position: relative;
+}
+
+.templates-section .section-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+
+.templates-section .section-header {
+    margin-bottom: 60px;
+}
+
+.templates-section .section-subtitle {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.1rem;
+    margin-top: 15px;
+}
+
+.templates-tabs {
+    width: 100%;
+}
+
+.tab-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1rem;
+    padding: 15px 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    font-family: inherit;
+}
+
+.tab-btn:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.tab-btn.active {
+    color: #fff;
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #fff;
+}
+
+.tab-content {
+    position: relative;
+}
+
+.tab-pane {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.tab-pane.active {
+    display: block;
+    opacity: 1;
+}
+
+.tab-pane-inner {
+    padding: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.tab-pane-inner h3 {
+    font-size: 1.8rem;
+    color: #fff;
+    margin-bottom: 15px;
+}
+
+.tab-pane-inner p {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin-bottom: 25px;
+}
+
+.btn-large {
+    display: inline-block;
+    padding: 14px 32px;
+    font-size: 1rem;
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .tab-buttons {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .tab-btn {
+        padding: 12px 20px;
+        text-align: left;
+    }
+    
+    .tab-pane-inner {
+        padding: 25px;
+    }
+    
+    .templates-section {
+        padding: 80px 0;
+    }
+}
